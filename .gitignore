@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Env
+.env
+!.env.example
+
+# Data / índices gerados (persistidos via volume Docker, não versionados)
+services/books_api/data/*.db
+services/semantic_search/index/
+services/semantic_search/data/*.faiss
+
+# IDE / SO
+.vscode/
+.idea/
+.DS_Store
+
+# uv / poetry
+.python-version

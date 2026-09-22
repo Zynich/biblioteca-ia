@@ -1,0 +1,46 @@
+services:
+  books_api:
+    build: ./services/books_api
+    container_name: biblioteca-ia-books-api
+    ports:
+      - "8001:8000"
+    volumes:
+      - books_data:/app/data
+    env_file: .env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  chatbot:
+    build: ./services/chatbot
+    container_name: biblioteca-ia-chatbot
+    ports:
+      - "8002:8000"
+    env_file: .env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+  semantic_search:
+    build: ./services/semantic_search
+    container_name: biblioteca-ia-semantic-search
+    ports:
+      - "8003:8000"
+    volumes:
+      - search_index:/app/index
+      - hf_cache:/root/.cache/huggingface
+    env_file: .env
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  books_data:
+  search_index:
+  hf_cache:
