@@ -22,6 +22,11 @@
 - Camadas separadas (`repositories/` para acesso a dados, `services/` para regra de
   negócio, `api/routes/` para HTTP) em vez de query direta na rota — facilita testes
   unitários isolados do banco.
+- **Dockerfile com dev-dependencies também no runtime**: para que `make test`/`make
+  lint` funcionem via `docker compose run` sem um estágio extra, a imagem final inclui
+  pytest/ruff/mypy. Em produção real, o runtime seria construído sem dev-dependencies
+  (`uv sync --no-dev`) e os testes rodariam a partir de um estágio `test` isolado — uma
+  simplificação consciente para o escopo deste teste.
 
 ## Questão 2 — Chatbot
 - **LangChain (LCEL) + LangSmith**: LCEL para compor `prompt | llm | parser` de forma
