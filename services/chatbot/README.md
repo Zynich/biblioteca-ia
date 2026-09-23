@@ -1,6 +1,7 @@
 # chatbot — Questão 2
 
-Chatbot especialista em Python via LangChain (LCEL) + OpenAI, com memória de conversa
+Chatbot especialista em Python via LangChain (LCEL) com **OpenAI** (padrão do enunciado),
+**Gemini** (plano gratuito) ou **Ollama** (LLM local, sem chave), com memória de conversa
 por sessão e rastreamento opcional via LangSmith.
 
 ## Rodando isoladamente (sem o compose raiz)
@@ -8,7 +9,8 @@ por sessão e rastreamento opcional via LangSmith.
 ```bash
 cd services/chatbot
 uv sync
-export OPENAI_API_KEY=sk-...          # obrigatório
+export LLM_PROVIDER=openai            # openai (padrão) | gemini | ollama
+export OPENAI_API_KEY=sk-...          # obrigatória para openai
 export OPENAI_MODEL=gpt-4o-mini       # opcional, esse é o default
 uv run uvicorn app.main:app --reload
 ```
@@ -55,6 +57,18 @@ curl -N -X POST http://localhost:8002/api/v1/chat/stream \
   -d '{"session_id": "demo", "message": "Explique list comprehension"}'
 ```
 
+## Provedores de LLM (`LLM_PROVIDER`)
+
+| Provedor | Variáveis | Observação |
+|---|---|---|
+| `openai` (padrão) | `OPENAI_API_KEY`, `OPENAI_MODEL` | Pago. É o que o enunciado pede; para GPT-4, `OPENAI_MODEL=gpt-4`. |
+| `gemini` | `GOOGLE_API_KEY`, `GEMINI_MODEL` | Plano gratuito; chave em https://aistudio.google.com/apikey (só conta Google). |
+| `ollama` | `OLLAMA_BASE_URL`, `OLLAMA_MODEL` | Local, **sem chave**: `make up-local` sobe o Ollama e `make pull-model` baixa o modelo (`qwen2.5:3b`, ~2 GB). |
+
+Sem a chave do provedor escolhido a API responde `500` dizendo qual variável falta. Só o
+`ollama` foi exercitado de ponta a ponta (é o que gerou os exemplos); `openai` e `gemini` foram
+testados apenas até a construção do cliente e os erros, pois não havia chave.
+
 ## Escopo do chatbot
 
 O prompt de sistema ([app/chain.py](app/chain.py)) restringe as respostas a dúvidas de
@@ -95,5 +109,5 @@ uv run pytest --cov=app --cov-report=term-missing
 LLM fake, payload inválido (422), memória por sessão (a segunda mensagem carrega mais
 contexto que a primeira), sessões diferentes não compartilham histórico, chave da
 OpenAI ausente (500), erro genérico do provedor (502), timeout (504), streaming (SSE,
-sucesso e erro) e a interface CLI (incluindo Ctrl+C e linhas em branco). 95% de
-cobertura.
+sucesso e erro) e a interface CLI (incluindo Ctrl+C e linhas em branco). 97% de
+cobertura (24 testes).

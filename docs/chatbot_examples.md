@@ -1,127 +1,233 @@
 # Exemplos de uso do chatbot (Questão 2)
 
-> **Importante — leia antes de usar este arquivo na entrega:** os exemplos abaixo foram
-> escritos manualmente para ilustrar o comportamento esperado (regras do prompt de
-> sistema em [app/chain.py](../services/chatbot/app/chain.py): responder em português,
-> sempre com explicação + código, recusar fora do escopo). **Não são transcrições reais
-> da API da OpenAI** — a implementação não foi validada contra a API de verdade porque
-> nenhuma `OPENAI_API_KEY` estava disponível neste ambiente de desenvolvimento.
+> **De onde vêm estas respostas.** São saídas **reais**, geradas pela própria aplicação (cadeia
+> LangChain em [`app/chain.py`](../services/chatbot/app/chain.py), mesmo prompt de sistema, mesma
+> memória por sessão), transcritas sem edição. Porém **não são do GPT-4 nem da OpenAI**:
+> não havia chave de API disponível, então foram geradas com o provedor local
+> **`LLM_PROVIDER=ollama`** e o modelo **`qwen2.5:3b`** (3 bilhões de parâmetros, rodando em CPU).
 >
-> Antes de entregar o teste, rode os exemplos de verdade e substitua as respostas
-> abaixo pelas reais:
->
-> ```bash
-> cp .env.example .env      # preencha OPENAI_API_KEY
-> make up
-> make chat                 # ou: curl no /api/v1/chat, ver services/chatbot/README.md
-> ```
->
-> Se `LANGSMITH_TRACING=true` estiver configurado, tire também um print do trace em
-> https://smith.langchain.com e cole aqui.
+> Um modelo pequeno é menos preciso que o GPT-4; há imprecisões técnicas apontadas nas
+> observações abaixo. Com `LLM_PROVIDER=openai` (padrão) ou `gemini` o fluxo é o mesmo e as
+> respostas tendem a ser melhores. Isso **não foi exercitado**: a chave é o que falta.
 
-## 1. Pergunta básica
+## Como reproduzir
+
+```bash
+cp .env.example .env
+# edite o .env: LLM_PROVIDER=ollama
+make up-local        # sobe os serviços + o Ollama
+make pull-model      # baixa o qwen2.5:3b (~2 GB, uma vez)
+make chat            # conversa pelo terminal (input de texto)
+# ou pela API:
+curl -X POST localhost:8002/api/v1/chat -H 'Content-Type: application/json' \
+  -d '{"session_id":"demo","message":"Como criar uma lista em Python?"}'
+```
+
+Para usar um modelo de nuvem em vez do local: `LLM_PROVIDER=openai` + `OPENAI_API_KEY`, ou
+`LLM_PROVIDER=gemini` + `GOOGLE_API_KEY` (chave gratuita em https://aistudio.google.com/apikey).
+As respostas variam a cada execução (o LLM não é determinístico).
+
+## 1. Pergunta do enunciado
 
 **Pergunta:** Como criar uma lista em Python?
 
-**Resposta esperada:**
+**Resposta** (gerada em 16s):
 
-> Em Python, uma lista é criada com colchetes `[]`, e pode conter qualquer tipo de
-> valor, inclusive misturados.
+> Em Python, você pode criar uma lista usando colchetes []. Aqui está um exemplo simples de como fazer isso:
 >
 > ```python
-> numeros = [1, 2, 3, 4]
-> frutas = ["maçã", "banana", "laranja"]
-> lista_vazia = []
->
-> # também é possível criar com a função list()
-> outra_lista = list((1, 2, 3))  # a partir de uma tupla
+> minha_lista = [1, 2, 3, 4, 5]
+> print(minha_lista)
 > ```
 >
-> Você pode adicionar itens com `.append()`, acessar por índice (`frutas[0]`) e fatiar
-> com `frutas[1:3]`.
+> Neste exemplo, estamos criando uma lista chamada `minha_lista` que contém cinco números inteiros. Quando você executa este código, a saída será `[1, 2, 3, 4, 5]`.
+>
+> Você também pode adicionar itens à lista ou remover itens dela. Aqui está um exemplo de como adicionar um item à lista:
+>
+> ```python
+> minha_lista.append(6)
+> print(minha_lista)
+> ```
+>
+> E aqui está um exemplo de como remover um item da lista:
+>
+> ```python
+> minha_lista.remove(3)
+> print(minha_lista)
+> ```
+>
+> Lembre-se de que as listas em Python são mutáveis, o que significa que você pode alterar seus elementos.
+
+**Observação:** a mesma pergunta também foi feita pela CLI (`make chat`, loop de `input()`) e obteve resposta equivalente.
 
 ## 2. Pergunta conceitual
 
 **Pergunta:** Qual a diferença entre lista e tupla em Python?
 
-**Resposta esperada:**
+**Resposta** (gerada em 24s):
 
-> A principal diferença é a **mutabilidade**: listas podem ser alteradas depois de
-> criadas (adicionar, remover, modificar itens); tuplas não podem.
+> Em Python, tanto listas quanto tuplas são estruturas de dados utilizadas para armazenar coleções de itens. No entanto, existem algumas diferenças entre elas:
 >
+> 1. Mutabilidade: Uma das principais diferenças entre listas e tuplas é que listas são mutáveis, ou seja, você pode alterar, adicionar ou remover itens após a criação da lista. Já as tuplas são imutáveis, ou seja, você não pode alterar, adicionar ou remover itens após a criação da tupla.
+>
+> 2. Criação: As listas são criadas usando colchetes [], enquanto as tuplas são criadas usando parênteses ().
+>
+> Vamos ver um exemplo de cada:
+>
+> Lista:
 > ```python
-> lista = [1, 2, 3]
-> lista.append(4)       # funciona: [1, 2, 3, 4]
->
-> tupla = (1, 2, 3)
-> tupla.append(4)        # AttributeError: 'tuple' object has no attribute 'append'
+> minha_lista = [1, 2, 3, 4]
+> print(minha_lista)
+> minha_lista.append(5)  # Adicionando um elemento à lista
+> print(minha_lista)
 > ```
 >
-> Por serem imutáveis, tuplas são um pouco mais rápidas e podem ser usadas como chave
-> de dicionário — listas não podem, porque dicionários exigem chaves *hashable*.
+> Tupla:
+> ```python
+> minha_tupla = (1, 2, 3, 4)
+> print(minha_tupla)
+> # minha_tupla.append(5)  # Não podemos adicionar elementos a uma tupla
+> ```
+>
+> Em Python, listas são geralmente mais flexíveis e úteis para manipulações de dados, enquanto tuplas são mais rápidas e são úteis para quando você precisa garantir que os dados não serão alterados.
 
-## 3. Pergunta de follow-up (demonstra a memória por `session_id`)
+## 3. Follow-up (memória por `session_id`)
 
 **Pergunta 1:** Como eu ordeno uma lista em Python?
 
-**Resposta esperada:**
+**Resposta** (gerada em 57s):
 
-> Use o método `.sort()` (ordena a lista original, no lugar) ou a função `sorted()`
-> (retorna uma lista nova, sem alterar a original).
+> Em Python, você pode ordenar uma lista de várias maneiras. A função mais comumente usada para isso é a `sorted()` para obter uma nova lista ordenada, ou a função `list.sort()` para ordenar a lista original em sua versão de lista.
+>
+> 1. Para obter uma nova lista ordenada, você pode usar a função `sorted()`. Essa função retorna uma nova lista que é a versão ordenada da lista original. Aqui está um exemplo:
 >
 > ```python
-> numeros = [5, 2, 4, 1, 3]
-> numeros.sort()              # numeros agora é [1, 2, 3, 4, 5]
+> # Lista original
+> minha_lista = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
 >
-> outra = [5, 2, 4, 1, 3]
-> ordenada = sorted(outra)    # outra continua [5, 2, 4, 1, 3]; ordenada é [1, 2, 3, 4, 5]
+> # Usando sorted() para obter uma nova lista ordenada
+> nova_lista = sorted(minha_lista)
+>
+> print(nova_lista)  # Saída: [1, 1, 2, 3, 3, 4, 5, 5, 5, 6, 9]
 > ```
-
-**Pergunta 2 (mesma `session_id`, sem repetir contexto):** E se eu quiser em ordem
-decrescente?
-
-**Resposta esperada** (o chatbot entende que "em ordem decrescente" se refere à
-ordenação da pergunta anterior, graças ao histórico da conversa):
-
-> Basta passar `reverse=True` para `.sort()` ou `sorted()`:
+>
+> 2. Para ordenar a lista original, você pode usar a função `list.sort()`. Essa função ordena a lista original em seu próprio lugar. Note que `list.sort()` ordena a lista em ordem crescente por padrão. Se você quiser ordenar em ordem decrescente, você pode usar a função `reverse=True`:
 >
 > ```python
-> numeros = [5, 2, 4, 1, 3]
-> numeros.sort(reverse=True)          # [5, 4, 3, 2, 1]
-> ordenada = sorted(numeros, reverse=True)
+> # Lista original
+> minha_lista = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
+>
+> # Usando list.sort() para ordenar a lista original
+> minha_lista.sort()
+>
+> print(minha_lista)  # Saída: [1, 1, 2, 3, 3, 4, 5, 5, 5, 6, 9]
+>
+> # Para ordenar em ordem decrescente
+> minha_lista.sort(reverse=True)
+>
+> print(minha_lista)  # Saída: [9, 6, 5, 5, 5, 4, 3, 3, 2, 1, 1]
 > ```
+>
+> Se você precisar de uma ordenação personalizada, como por exemplo, baseada em um valor de cada elemento, você pode fornecer uma função de comparação para a função `sort()` ou `sorted()`.
+>
+> Por exemplo, se você quiser ordenar uma lista de dicionários por um valor específico, você pode fazer isso da seguinte maneira:
+>
+> ```python
+> # Lista de dicionários
+> dicionarios = [
+>     {'nome': 'João', 'idade': 30},
+>     {'nome': 'Maria', 'idade': 25},
+>     {'nome': 'Pedro', 'idade': 35},
+> ]
+>
+> # Ordenando por 'idade'
+> dicionarios.sort(key=lambda d: d['idade'])
+>
+> print(dicionarios)  # Saída: [{'nome': 'Maria', 'idade': 25}, {'nome': 'João', 'idade': 30}, {'nome': 'Pedro', 'idade': 35}]
+> ```
+>
+> Lembre-se de que `sorted()` retorna uma lista ordenada, enquanto `list.sort()` ordena a lista original. Se você não precisa de uma lista ordenada e está apenas interessado em alterar a lista original, use `list.sort()`. Se você precisa de uma lista ordenada e não quer alterar a lista original, use `sorted()`.
+
+**Pergunta 2:** E se eu quiser em ordem decrescente?
+
+**Resposta** (gerada em 31s):
+
+> Para ordenar uma lista em ordem decrescente em Python, você pode usar a função `sorted()` com o parâmetro `reverse=True`, ou você pode usar a função `list.sort()` com o parâmetro `reverse=True`. Ambas as abordagens retornam uma lista ordenada, mas com a diferença que `list.sort()` modifica a lista original, enquanto `sorted()` retorna uma nova lista.
+>
+> Vamos ver ambos os métodos:
+>
+> ### Usando `sorted()` com `reverse=True`
+> ```python
+> minha_lista = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
+> nova_lista = sorted(minha_lista, reverse=True)
+> print(nova_lista)  # Saída: [9, 6, 5, 5, 5, 4, 3, 3, 2, 1, 1]
+> ```
+>
+> ### Usando `list.sort()` com `reverse=True`
+> ```python
+> minha_lista = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
+> minha_lista.sort(reverse=True)
+> print(minha_lista)  # Saída: [9, 6, 5, 5, 5, 4, 3, 3, 2, 1, 1]
+> ```
+>
+> Ambas as abordagens retornam uma nova lista ordenada em ordem decrescente. Se você deseja alterar a lista original, use `list.sort()` com `reverse=True`. Se você não deseja alterar a lista original, use `sorted()` com `reverse=True`.
+
+**Observação:** a segunda pergunta não repete o assunto e o bot a entendeu como "ordem decrescente da lista": é o histórico da sessão funcionando. **Imprecisões do modelo:** na resposta 1 ele diz "função de comparação" onde o correto é uma função de *chave* (`key=`), e chama `reverse=True` de "função" (é um parâmetro); na resposta 2 afirma que ambas as abordagens "retornam uma nova lista", mas `list.sort()` retorna `None` e altera a lista original (o exemplo de código, porém, está correto).
 
 ## 4. Pergunta fora do escopo (deve ser recusada)
 
 **Pergunta:** Qual a melhor receita de brigadeiro?
 
-**Resposta esperada:**
+**Resposta** (gerada em 6s):
 
-> Desculpe, meu escopo é apenas dúvidas sobre programação em Python — não consigo
-> ajudar com receitas culinárias. Se tiver alguma pergunta sobre Python, fico à
-> disposição!
+> Desculpe, mas eu não posso ajudar com isso. Meu escopo é fornecer assistência com perguntas relacionadas a programação em Python. Sobre brigadeiros, você poderia me perguntar sobre como fazer uma receita de brigadeiro em Python, como calcular a quantidade de ingredientes ou como criar um programa que gere receitas de brigadeiro?
+
+**Observação:** recusou e manteve o escopo, mas a sugestão final ("receita de brigadeiro em Python") é desnecessária; um modelo maior costuma ser mais conciso.
 
 ## 5. Pergunta um pouco mais avançada
 
 **Pergunta:** O que é uma list comprehension?
 
-**Resposta esperada:**
+**Resposta** (gerada em 27s):
 
-> É uma forma concisa de criar listas a partir de uma sequência existente, combinando
-> um laço `for` (e opcionalmente um `if`) em uma única linha.
+> List comprehension é uma maneira concisa de criar listas em Python. Ela consiste em escrever uma nova lista baseada em uma sequência existente, usando uma expressão de lista e um ou mais loops condicionais ou de iteração.
+>
+> A sintaxe básica de list comprehension é:
 >
 > ```python
-> numeros = [1, 2, 3, 4, 5, 6]
->
-> # forma tradicional
-> pares = []
-> for n in numeros:
->     if n % 2 == 0:
->         pares.append(n)
->
-> # com list comprehension
-> pares = [n for n in numeros if n % 2 == 0]   # [2, 4, 6]
->
-> # também funciona para transformar valores
-> quadrados = [n ** 2 for n in numeros]         # [1, 4, 9, 16, 25, 36]
+> [expressão for item in lista]
 > ```
+>
+> Ou com uma condição:
+>
+> ```python
+> [expressão for item in lista if condição]
+> ```
+>
+> Vamos ver um exemplo para entender melhor:
+>
+> ```python
+> # Exemplo 1: Criando uma lista com list comprehension
+> numeros = [1, 2, 3, 4, 5]
+> pares = [n for n in numeros if n % 2 == 0]
+> print(pares)  # Saída: [2, 4]
+> ```
+>
+> Neste exemplo, estamos criando uma nova lista chamada `pares` que contém apenas os números pares da lista `numeros`.
+>
+> ```python
+> # Exemplo 2: Criando uma lista com list comprehension usando uma condição
+> numeros = [1, 2, 3, 4, 5]
+> impares = [n for n in numeros if n % 2 != 0]
+> print(impares)  # Saída: [1, 3, 5]
+> ```
+>
+> Neste segundo exemplo, estamos criando uma nova lista chamada `impares` que contém apenas os números ímpares da lista `numeros`.
+>
+> List comprehension é uma forma concisa e rápida de criar listas, e é muito útil quando você precisa criar listas a partir de outras sequências.
+
+## Rastreamento com LangSmith
+
+A integração é feita só por variáveis (`LANGSMITH_TRACING`, `LANGSMITH_API_KEY`,
+`LANGSMITH_PROJECT`) e **não foi validada** (exige conta e chave do LangSmith); nenhum trace
+foi anexado aqui.

@@ -48,21 +48,52 @@ def reset_history_store() -> None:
 
 
 class MissingAPIKeyError(Exception):
-    def __init__(self) -> None:
-        super().__init__("OPENAI_API_KEY não configurada. Defina a variável no .env.")
+    def __init__(self, variable: str = "OPENAI_API_KEY") -> None:
+        super().__init__(f"{variable} não configurada. Defina a variável no .env.")
+
+
+# Sem timeout o cliente ficaria pendurado indefinidamente se o provedor não respondesse.
+LLM_TIMEOUT_SECONDS = 120
 
 
 def _default_llm() -> BaseChatModel:
-    # Falha explícita e imediata (sem tentar uma chamada de rede primeiro) quando a
-    # chave não está configurada — melhor um erro claro do que um stack trace da
-    # biblioteca da OpenAI vazando pra resposta HTTP.
-    if not settings.openai_api_key:
-        raise MissingAPIKeyError
+    """Cria o LLM do provedor escolhido em LLM_PROVIDER. Falha explícita e imediata (sem
+    tentar uma chamada de rede primeiro) quando falta a chave — melhor um erro claro do que
+    um stack trace da biblioteca do provedor vazando para a resposta HTTP."""
+    provider = settings.llm_provider
 
+    if provider == "ollama":
+        from langchain_ollama import ChatOllama
+
+        return ChatOllama(
+            model=settings.ollama_model,
+            base_url=settings.ollama_base_url,
+            temperature=0.2,
+            client_kwargs={"timeout": LLM_TIMEOUT_SECONDS},
+        )
+
+    if provider == "gemini":
+        if not settings.google_api_key:
+            raise MissingAPIKeyError("GOOGLE_API_KEY")
+        from langchain_google_genai import ChatGoogleGenerativeAI
+        from pydantic import SecretStr
+
+        return ChatGoogleGenerativeAI(
+            model=settings.gemini_model,
+            api_key=SecretStr(settings.google_api_key),
+            timeout=LLM_TIMEOUT_SECONDS,
+        )
+
+    if not settings.openai_api_key:
+        raise MissingAPIKeyError("OPENAI_API_KEY")
     from langchain_openai import ChatOpenAI
     from pydantic import SecretStr
 
-    return ChatOpenAI(model=settings.openai_model, api_key=SecretStr(settings.openai_api_key))
+    return ChatOpenAI(
+        model=settings.openai_model,
+        api_key=SecretStr(settings.openai_api_key),
+        timeout=LLM_TIMEOUT_SECONDS,
+    )
 
 
 def build_chain(llm: BaseChatModel | None = None) -> RunnableWithMessageHistory:
@@ -86,6 +117,6 @@ def build_chain(llm: BaseChatModel | None = None) -> RunnableWithMessageHistory:
 
 @lru_cache(maxsize=1)
 def get_chatbot_chain() -> RunnableWithMessageHistory:
-    """Singleton da chain de produção (usa ChatOpenAI de verdade). Sobrescrita nos
+    """Singleton da chain de produção (usa o provedor definido em LLM_PROVIDER). Sobrescrita nos
     testes via `app.dependency_overrides`."""
     return build_chain()

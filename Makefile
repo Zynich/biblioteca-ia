@@ -1,10 +1,16 @@
-.PHONY: up down build logs test lint fmt ingest chat
+.PHONY: up up-local pull-model down build logs test lint fmt ingest chat
 
 up: ## Sobe os 3 serviços em background
 	docker compose up -d --build
 
+up-local: ## Sobe os serviços + Ollama (LLM local, sem chave de API)
+	docker compose --profile local-llm up -d --build
+
+pull-model: ## Baixa o modelo do Ollama (OLLAMA_MODEL do .env; default qwen2.5:3b)
+	docker compose --profile local-llm exec ollama ollama pull $${OLLAMA_MODEL:-$$(grep -E '^OLLAMA_MODEL=' .env | cut -d= -f2)}
+
 down: ## Derruba os serviços e remove os containers
-	docker compose down
+	docker compose --profile local-llm down
 
 build: ## Rebuild das imagens sem subir
 	docker compose build

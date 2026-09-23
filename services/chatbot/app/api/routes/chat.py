@@ -4,6 +4,7 @@ chain LangChain (prompt | LLM | parser) com memória de conversa por sessão."""
 import json
 from collections.abc import Generator
 
+import httpx
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import StreamingResponse
 from langchain_core.runnables import RunnableConfig
@@ -39,7 +40,7 @@ def _invoke_config(session_id: str) -> RunnableConfig:
         "perguntas de follow-up."
     ),
     responses={
-        500: {"description": "OPENAI_API_KEY não configurada"},
+        500: {"description": "Chave do provedor (OPENAI_API_KEY / GOOGLE_API_KEY) não configurada"},
         502: {"description": "Erro ao consultar o modelo de linguagem"},
         504: {"description": "Tempo limite excedido ao consultar o modelo"},
     },
@@ -58,7 +59,7 @@ def chat(
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc)
         ) from exc
-    except TimeoutError as exc:
+    except (TimeoutError, httpx.TimeoutException) as exc:
         raise HTTPException(
             status_code=status.HTTP_504_GATEWAY_TIMEOUT,
             detail="Tempo limite excedido ao consultar o modelo",

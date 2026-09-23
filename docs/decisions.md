@@ -47,6 +47,15 @@
   desproporcional ao problema. Se o chatbot evoluir para um agente (ferramentas,
   múltiplos passos, roteamento condicional), migrar para LangGraph com
   `MemorySaver`/`PostgresSaver` como checkpointer é o caminho natural.
+- **Três provedores de LLM (`LLM_PROVIDER`): openai, gemini, ollama.** O enunciado pede a
+  OpenAI, mas nem todo mundo que for reproduzir tem uma chave paga. Como o LangChain abstrai
+  o modelo (`BaseChatModel`), trocar de provedor é só escolher a classe em `_default_llm()`;
+  chain, memória e rotas não mudam. Gemini tem plano gratuito; Ollama roda local, sem conta
+  nem chave, e foi o que permitiu gerar exemplos **reais** sem chave da OpenAI. OpenAI segue
+  como padrão. O serviço `ollama` do compose fica em um *profile* (`local-llm`), então
+  `make up` continua subindo só os 3 serviços; `make up-local` inclui o Ollama.
+- **Timeout de 120s nos clientes de LLM e `httpx.TimeoutException` → 504**: sem isso, um
+  provedor lento (típico em CPU com modelo local) deixaria a requisição pendurada.
 - **Testes com `FakeListChatModel`**: os testes não fazem chamadas reais à OpenAI (sem
   custo, sem flakiness, sem exigir chave válida no CI).
 

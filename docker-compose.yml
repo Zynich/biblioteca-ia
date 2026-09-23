@@ -40,7 +40,23 @@ services:
       timeout: 3s
       retries: 5
 
+  # LLM local opcional (profile local-llm): `make up-local`. Não sobe no `make up` padrão.
+  ollama:
+    image: ollama/ollama:latest
+    container_name: biblioteca-ia-ollama
+    profiles: ["local-llm"]
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
 volumes:
+  ollama_data:
   books_data:
   search_index:
   hf_cache:

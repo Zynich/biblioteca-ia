@@ -36,9 +36,7 @@ def test_cli_skips_blank_lines(monkeypatch: pytest.MonkeyPatch, capsys) -> None:
     assert "primeira resposta real" in out
 
 
-def test_cli_exits_cleanly_on_keyboard_interrupt(
-    monkeypatch: pytest.MonkeyPatch, capsys
-) -> None:
+def test_cli_exits_cleanly_on_keyboard_interrupt(monkeypatch: pytest.MonkeyPatch, capsys) -> None:
     fake_chain = build_chain(llm=FakeListChatModel(responses=["nunca deveria ser chamado"]))
     monkeypatch.setattr(cli, "get_chatbot_chain", lambda: fake_chain)
 

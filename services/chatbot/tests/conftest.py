@@ -4,9 +4,14 @@ dependency `get_chain` é sobrescrita com chains construídas sobre um LLM fake.
 import os
 from collections.abc import Generator
 
-# Garante que os testes rodem sem uma chave real, independentemente do ambiente de
-# quem executa `pytest` — o teste de "chave ausente" depende disso.
-os.environ.pop("OPENAI_API_KEY", None)
+# Isola os testes do ambiente de quem executa `pytest`: o teste de "chave ausente" depende
+# de não haver chave, e um .env com LLM_PROVIDER=ollama/gemini (que o load_dotenv() de
+# app.core.config encontra subindo as pastas, e o `make test` herda no container) mudaria o
+# provedor. Definir (em vez de remover) as variáveis funciona porque load_dotenv não
+# sobrescreve variáveis que já existem.
+os.environ["LLM_PROVIDER"] = "openai"
+os.environ["OPENAI_API_KEY"] = ""
+os.environ["GOOGLE_API_KEY"] = ""
 
 import pytest  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402

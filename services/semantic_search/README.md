@@ -54,7 +54,7 @@ O primeiro uso baixa o modelo (~470 MB) do Hugging Face; no Docker ele fica no v
 uv run pytest --cov=app --cov-report=term-missing
 ```
 
-49 testes, ~98% de cobertura. Usam o **modelo real** (baixado uma vez e reaproveitado do
+49 testes, ~99% de cobertura. Usam o **modelo real** (baixado uma vez e reaproveitado do
 cache do HF) e o dataset real: dimensão 384, norma ≈ 1, padding não altera o vetor,
 `"como fazer bolo"` → artigo de culinária no top-1 (e outras 6 consultas), persistência
 (salvar → recarregar → mesmo resultado), recarga do índice quando outro processo o
