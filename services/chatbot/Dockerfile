@@ -3,7 +3,7 @@
 # ---- Stage 1: builder — instala dependências com uv em um venv isolado ----
 FROM python:3.12-slim AS builder
 
-COPY --from=ghcr.io/astral-sh/uv:0.4.29 /uv /uvx /bin/
+COPY --from=ghcr.io/astral-sh/uv:0.12.17 /uv /uvx /bin/
 
 WORKDIR /app
 
@@ -11,12 +11,12 @@ ENV UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy \
     UV_PROJECT_ENVIRONMENT=/app/.venv
 
-COPY pyproject.toml ./
-RUN uv sync --no-install-project
+COPY pyproject.toml uv.lock ./
+RUN uv sync --frozen --no-install-project
 
 COPY app ./app
 COPY tests ./tests
-RUN uv sync
+RUN uv sync --frozen
 
 # ---- Stage 2: runtime — imagem final, usuário não-root ----
 # Mantém dev-dependencies no runtime pelo mesmo motivo documentado em
@@ -29,15 +29,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl \
 
 WORKDIR /app
 
-COPY --from=builder /app/.venv /app/.venv
-COPY --from=builder /app/app ./app
-COPY --from=builder /app/tests ./tests
-COPY pyproject.toml ./
+COPY --chown=appuser:appuser --from=builder /app/.venv /app/.venv
+COPY --chown=appuser:appuser --from=builder /app/app ./app
+COPY --chown=appuser:appuser --from=builder /app/tests ./tests
+COPY --chown=appuser:appuser pyproject.toml uv.lock ./
 
 ENV PATH="/app/.venv/bin:$PATH" \
     PYTHONUNBUFFERED=1
 
-RUN chown -R appuser:appuser /app
+RUN chown appuser:appuser /app
 
 USER appuser
 

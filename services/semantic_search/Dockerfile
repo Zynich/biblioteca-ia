@@ -11,6 +11,8 @@ ENV UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy \
     UV_PROJECT_ENVIRONMENT=/app/.venv
 
+# O uv.lock já fixa o torch da build CPU-only (índice pytorch-cpu definido no
+# pyproject.toml): evita baixar as libs CUDA e reduz a imagem em vários GB.
 COPY pyproject.toml uv.lock ./
 RUN uv sync --frozen --no-install-project
 
@@ -18,14 +20,13 @@ COPY app ./app
 COPY tests ./tests
 RUN uv sync --frozen
 
-# ---- Stage 2: runtime — imagem final enxuta, usuário não-root ----
-# Observação: mantemos as dev-dependencies (pytest/ruff/mypy) também no runtime para
-# que `make test`/`make lint` funcionem via `docker compose run` sem um estágio extra.
-# Em produção real, essa imagem seria construída sem dev-dependencies e os testes
-# rodariam a partir de um estágio "test" isolado (ver docs/decisions.md).
+# ---- Stage 2: runtime — usuário não-root ----
+# Mantém dev-dependencies no runtime pelo mesmo motivo documentado em
+# services/books_api/Dockerfile e docs/decisions.md.
 FROM python:3.12-slim AS runtime
 
-RUN apt-get update && apt-get install -y --no-install-recommends curl \
+# libgomp1: runtime do OpenMP exigido pelo faiss-cpu (não vem na imagem slim).
+RUN apt-get update && apt-get install -y --no-install-recommends curl libgomp1 \
     && rm -rf /var/lib/apt/lists/* \
     && useradd --create-home --uid 1000 appuser
 
@@ -34,12 +35,17 @@ WORKDIR /app
 COPY --chown=appuser:appuser --from=builder /app/.venv /app/.venv
 COPY --chown=appuser:appuser --from=builder /app/app ./app
 COPY --chown=appuser:appuser --from=builder /app/tests ./tests
-COPY --chown=appuser:appuser pyproject.toml uv.lock ./
+COPY --chown=appuser:appuser pyproject.toml ./
+COPY --chown=appuser:appuser data ./data
 
+# HF_HOME fora de /root: o container roda como appuser. O diretório existe (e pertence ao
+# appuser) na imagem para que o volume nomeado hf_cache herde essas permissões.
 ENV PATH="/app/.venv/bin:$PATH" \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    HF_HOME=/app/.cache/huggingface
 
-RUN mkdir -p /app/data && chown appuser:appuser /app /app/data
+RUN mkdir -p /app/index /app/.cache/huggingface \
+    && chown -R appuser:appuser /app/index /app/.cache && chown appuser:appuser /app
 
 USER appuser
 

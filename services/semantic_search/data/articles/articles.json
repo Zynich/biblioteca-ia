@@ -1,0 +1,122 @@
+[
+  {
+    "id": "python-01",
+    "title": "Como criar e manipular listas em Python",
+    "content": "Listas são uma das estruturas de dados mais usadas em Python. Para criar uma lista basta usar colchetes, como em numeros = [1, 2, 3], ou chamar a função list(). Elas são mutáveis: você pode adicionar elementos com append(), inserir em uma posição específica com insert() e remover itens com remove() ou pop(). O acesso é feito por índice, começando em zero, e o fatiamento (slicing) permite extrair sublistas, por exemplo numeros[1:3]. Também é possível ordenar com sort() ou sorted(), e criar novas listas de forma concisa usando list comprehensions, como [n * 2 for n in numeros]."
+  },
+  {
+    "id": "python-02",
+    "title": "Entendendo decoradores em Python",
+    "content": "Um decorador é uma função que recebe outra função e devolve uma versão modificada dela, sem alterar o código original. A sintaxe com @ é um atalho: escrever @meu_decorador acima de def funcao() equivale a funcao = meu_decorador(funcao). Decoradores são muito usados para registrar logs, medir o tempo de execução, controlar permissões em rotas de uma API e fazer cache de resultados. Para preservar o nome e a documentação da função original, use functools.wraps dentro do decorador. Também existem decoradores com parâmetros, que exigem uma função extra por fora."
+  },
+  {
+    "id": "python-03",
+    "title": "Ambientes virtuais e gerenciamento de dependências",
+    "content": "Um ambiente virtual isola as bibliotecas de cada projeto Python, evitando conflitos de versão entre projetos diferentes. Com o módulo venv, o comando python -m venv .venv cria o ambiente, e ele é ativado com source .venv/bin/activate no Linux. Ferramentas modernas como uv e Poetry vão além: usam o arquivo pyproject.toml para declarar dependências e geram um arquivo de lock que garante instalações reproduzíveis. Assim, qualquer pessoa da equipe instala exatamente as mesmas versões dos pacotes, e o pipeline de integração contínua se comporta como a máquina local."
+  },
+  {
+    "id": "python-04",
+    "title": "Programação assíncrona com asyncio",
+    "content": "O módulo asyncio permite escrever código concorrente em Python usando corrotinas, declaradas com async def e aguardadas com await. Enquanto uma corrotina espera uma operação de rede ou de disco, o laço de eventos executa outras tarefas, o que aumenta a vazão em aplicações que fazem muitas chamadas de entrada e saída. Com asyncio.gather() é possível disparar várias requisições HTTP ao mesmo tempo e esperar todas terminarem. Vale lembrar que asyncio não acelera código limitado por CPU; para esse caso, processos ou bibliotecas nativas são mais indicados."
+  },
+  {
+    "id": "python-05",
+    "title": "Testes automatizados com pytest",
+    "content": "O pytest é o framework de testes mais popular do ecossistema Python. Os testes são funções simples que começam com test_ e usam o assert nativo da linguagem, com mensagens de erro detalhadas. As fixtures, declaradas com @pytest.fixture, permitem preparar e limpar recursos como conexões de banco de dados ou clientes HTTP, e podem ser compartilhadas entre arquivos pelo conftest.py. O decorador @pytest.mark.parametrize executa o mesmo teste com vários conjuntos de dados, e o plugin pytest-cov mede a cobertura de código."
+  },
+  {
+    "id": "culinaria-01",
+    "title": "Receita de bolo de cenoura com cobertura de chocolate",
+    "content": "Para fazer um bolo de cenoura fofinho, bata no liquidificador três cenouras médias descascadas, quatro ovos e meio copo de óleo até formar um creme homogêneo. Despeje a mistura em uma tigela e acrescente duas xícaras de açúcar e duas xícaras e meia de farinha de trigo, mexendo bem. Por último, adicione uma colher de sopa de fermento em pó. Asse em forma untada, em forno preaquecido a 180 graus, por cerca de quarenta minutos, até que um palito saia limpo. Para a cobertura, misture chocolate em pó, açúcar, manteiga e leite em uma panela e leve ao fogo até engrossar."
+  },
+  {
+    "id": "culinaria-02",
+    "title": "Como fazer pão caseiro sem sova",
+    "content": "O pão sem sova é ideal para quem está começando na panificação. Misture quatro xícaras de farinha de trigo, uma colher de chá de sal e uma pitada de fermento biológico seco em uma tigela grande. Adicione duas xícaras de água morna e mexa apenas até incorporar, sem amassar. Cubra com um pano e deixe a massa descansar por doze a dezoito horas em temperatura ambiente, até formar bolhas na superfície. Modele a massa com as mãos enfarinhadas, deixe crescer mais uma hora e asse em panela de ferro tampada a 230 graus, o que forma uma crosta crocante."
+  },
+  {
+    "id": "culinaria-03",
+    "title": "Molho de tomate fresco para massas",
+    "content": "Um bom molho de tomate começa com ingredientes frescos. Faça um corte em cruz na base de cada tomate maduro, escalde em água fervente por um minuto e retire a pele. Refogue alho picado e cebola em azeite de oliva até dourar, junte os tomates sem sementes picados e cozinhe em fogo baixo por trinta minutos, mexendo de vez em quando. Tempere com sal, pimenta-do-reino e folhas de manjericão fresco no final. O molho combina com espaguete, penne ou nhoque, e pode ser congelado em porções."
+  },
+  {
+    "id": "culinaria-04",
+    "title": "Feijoada completa: dicas de preparo",
+    "content": "A feijoada é um prato tradicional brasileiro feito com feijão preto e diferentes cortes de carne de porco e de boi, como costelinha, paio, linguiça e carne seca. Deixe as carnes salgadas de molho por doze horas, trocando a água algumas vezes para tirar o excesso de sal. Cozinhe o feijão na panela de pressão com louro e depois junte as carnes já pré-cozidas, deixando apurar em fogo baixo por pelo menos uma hora. Sirva com arroz branco, couve refogada, farofa e laranja fatiada, que ajuda na digestão."
+  },
+  {
+    "id": "culinaria-05",
+    "title": "Brigadeiro perfeito: ponto e textura",
+    "content": "Para um brigadeiro cremoso, leve ao fogo baixo uma lata de leite condensado, duas colheres de sopa de chocolate em pó e uma colher de manteiga, mexendo sem parar. O ponto certo é quando a mistura solta do fundo da panela e forma um caminho ao passar a colher. Despeje em um prato untado e espere esfriar. Para enrolar, unte as mãos com manteiga e faça bolinhas, passando em seguida no granulado de chocolate. Se quiser servir na colher, retire a panela do fogo um pouco antes."
+  },
+  {
+    "id": "financas-01",
+    "title": "Como montar uma reserva de emergência",
+    "content": "A reserva de emergência é um dinheiro guardado para imprevistos, como desemprego, problemas de saúde ou conserto urgente de um bem. A recomendação comum é acumular o equivalente a seis meses do seu custo de vida mensal, e até doze meses para quem tem renda instável, como autônomos. Esse valor deve ficar em aplicações de baixo risco e com liquidez diária, como o Tesouro Selic ou um CDB com liquidez imediata. Comece automatizando uma transferência mensal logo após receber o salário, mesmo que seja um valor pequeno, e só use a reserva em emergências reais."
+  },
+  {
+    "id": "financas-02",
+    "title": "Tesouro Direto para iniciantes",
+    "content": "O Tesouro Direto é um programa em que o investidor empresta dinheiro ao governo federal e recebe juros em troca. Existem três tipos principais de títulos: o Tesouro Selic, que acompanha a taxa básica de juros e é indicado para a reserva de emergência; o Tesouro Prefixado, com rentabilidade definida no momento da compra; e o Tesouro IPCA+, que paga a inflação mais uma taxa fixa e protege o poder de compra no longo prazo. É possível começar com valores baixos, e o imposto de renda diminui conforme o tempo de aplicação aumenta."
+  },
+  {
+    "id": "financas-03",
+    "title": "Juros compostos explicados",
+    "content": "Nos juros compostos, os rendimentos de cada período são somados ao capital e passam a render juros também, o que gera crescimento exponencial ao longo do tempo. A fórmula é montante igual ao capital multiplicado por um mais a taxa, elevado ao número de períodos. Por exemplo, mil reais aplicados a um por cento ao mês viram cerca de mil cento e vinte e seis reais em doze meses. O mesmo mecanismo funciona contra você em dívidas, como o rotativo do cartão de crédito, em que os juros altos fazem o saldo devedor crescer rapidamente."
+  },
+  {
+    "id": "financas-04",
+    "title": "Diversificação de carteira de investimentos",
+    "content": "Diversificar significa distribuir o dinheiro entre diferentes tipos de ativos, como renda fixa, ações, fundos imobiliários e investimentos internacionais, para que o mau desempenho de um deles não comprometa todo o patrimônio. A proporção ideal depende do perfil do investidor, do prazo dos objetivos e da tolerância ao risco. Uma carteira conservadora concentra a maior parte na renda fixa, enquanto uma carteira arrojada aceita mais volatilidade em busca de retornos maiores. Revisar a alocação uma ou duas vezes por ano, fazendo o rebalanceamento, mantém a estratégia alinhada aos objetivos."
+  },
+  {
+    "id": "financas-05",
+    "title": "Como sair das dívidas do cartão de crédito",
+    "content": "Dívidas de cartão de crédito têm algumas das maiores taxas de juros do mercado, então pagá-las deve ser prioridade. Comece listando todas as dívidas, com valor, taxa de juros e vencimento. Corte gastos supérfluos e use o dinheiro liberado para quitar primeiro a dívida com juros mais altos. Procure renegociar diretamente com o banco ou em feirões de negociação, pedindo descontos para pagamento à vista, e considere trocar a dívida do rotativo por um empréstimo pessoal ou consignado com juros menores. Evite pagar apenas o valor mínimo da fatura."
+  },
+  {
+    "id": "esportes-01",
+    "title": "Como melhorar o tempo em corridas de 5 km",
+    "content": "Para baixar seu tempo nos cinco quilômetros, combine diferentes tipos de treino ao longo da semana. Faça uma corrida longa em ritmo confortável para construir resistência, um treino intervalado, como oito tiros de quatrocentos metros com recuperação em trote, e uma corrida em ritmo constante um pouco mais forte que o normal. Inclua exercícios de fortalecimento para pernas e core, alongue após os treinos e respeite os dias de descanso para evitar lesões. Na prova, comece um pouco mais lento do que o ritmo-alvo e acelere na segunda metade."
+  },
+  {
+    "id": "esportes-02",
+    "title": "Regras básicas do futebol: impedimento e faltas",
+    "content": "No futebol, dois times de onze jogadores tentam colocar a bola no gol adversário, sem usar as mãos, exceto o goleiro dentro da sua área. Um jogador está em impedimento quando, no momento do passe, está mais próximo da linha de fundo adversária do que a bola e do que o penúltimo defensor. Faltas cometidas dentro da grande área resultam em pênalti. O árbitro pode mostrar cartão amarelo como advertência e cartão vermelho para expulsão, e o jogador expulso não pode ser substituído. A partida tem dois tempos de quarenta e cinco minutos."
+  },
+  {
+    "id": "esportes-03",
+    "title": "Táticas do basquete: o pick and roll",
+    "content": "O pick and roll é uma das jogadas mais usadas no basquete. Um jogador sem a bola, geralmente o pivô, posiciona-se ao lado do defensor do armador, criando uma barreira chamada bloqueio. O armador usa esse bloqueio para passar pelo marcador e, em seguida, o jogador que bloqueou gira em direção à cesta, pronto para receber o passe. A jogada cria duas opções ao mesmo tempo: o armador pode arremessar ou infiltrar, e o pivô pode finalizar perto do aro. Defesas respondem trocando as marcações ou dobrando em cima do portador da bola."
+  },
+  {
+    "id": "esportes-04",
+    "title": "Natação: técnica do nado crawl",
+    "content": "O nado crawl é o estilo mais rápido e eficiente da natação. O corpo deve permanecer alinhado e horizontal na água, com a cabeça relaxada olhando para o fundo da piscina. Os braços alternam-se em um movimento contínuo: a mão entra na água à frente do ombro, puxa a água por baixo do corpo e sai perto do quadril. As pernas fazem batidas curtas e constantes, saindo do quadril. A respiração acontece de lado, girando a cabeça no momento em que o braço sai da água, e deve ser rítmica, por exemplo a cada três braçadas."
+  },
+  {
+    "id": "esportes-05",
+    "title": "Treino de musculação para iniciantes",
+    "content": "Quem está começando na academia deve priorizar exercícios básicos que trabalham vários grupos musculares, como agachamento, supino, remada e desenvolvimento de ombros. Um treino de corpo inteiro, três vezes por semana, com duas ou três séries de oito a doze repetições, é suficiente para gerar evolução nos primeiros meses. A técnica correta vem antes da carga: aumente o peso aos poucos, quando conseguir completar todas as repetições com boa execução. Alimente-se com proteína suficiente, durma bem e respeite o descanso entre os treinos para permitir a recuperação muscular."
+  },
+  {
+    "id": "viagem-01",
+    "title": "Roteiro de 5 dias em Lisboa",
+    "content": "Lisboa é uma cidade acolhedora e cheia de história, ideal para um roteiro de cinco dias. No primeiro dia, explore o bairro de Alfama, o castelo de São Jorge e o mirante da Senhora do Monte. No segundo, visite Belém, com a Torre de Belém, o Mosteiro dos Jerónimos e os famosos pastéis de nata. Reserve o terceiro dia para o Chiado, o Bairro Alto e uma noite de fado. O quarto dia pode ser uma viagem de trem até Sintra, com seus palácios, e o quinto dia para passear no Parque das Nações e conhecer o Oceanário."
+  },
+  {
+    "id": "viagem-02",
+    "title": "Dicas para viajar com pouca bagagem",
+    "content": "Viajar apenas com a mala de mão economiza taxas de despacho e tempo no aeroporto. Escolha roupas de cores neutras que combinem entre si, de tecidos leves que secam rápido, e planeje looks que possam ser repetidos. Enrole as peças em vez de dobrá-las para ocupar menos espaço e use organizadores para separar itens. Leve líquidos em frascos de até cem mililitros, dentro de uma necessaire transparente, e lave roupas durante a viagem. Deixe os itens mais pesados, como casacos e botas, vestidos no dia do embarque."
+  },
+  {
+    "id": "saude-01",
+    "title": "A importância do sono para a saúde",
+    "content": "Dormir bem é essencial para a saúde física e mental. Durante o sono, o corpo repara tecidos, regula hormônios e consolida memórias. Adultos precisam, em geral, de sete a nove horas de sono por noite, e a privação crônica aumenta o risco de obesidade, diabetes, doenças cardíacas e depressão. Para melhorar a qualidade do sono, mantenha horários regulares para deitar e acordar, evite telas e cafeína nas horas antes de dormir, deixe o quarto escuro e silencioso e faça atividade física durante o dia, mas não muito perto da hora de deitar."
+  },
+  {
+    "id": "saude-02",
+    "title": "Benefícios da meditação diária",
+    "content": "A meditação é uma prática de treinar a atenção e a consciência do momento presente. Estudos associam a prática regular à redução do estresse e da ansiedade, à melhora da concentração e a uma maior sensação de bem-estar. Para começar, sente-se em um lugar tranquilo, feche os olhos e concentre-se na respiração, notando o ar entrando e saindo. Quando a mente divagar, e isso é normal, apenas volte a atenção para a respiração, sem se criticar. Cinco a dez minutos por dia já são suficientes para os primeiros resultados."
+  }
+]
