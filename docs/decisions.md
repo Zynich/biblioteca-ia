@@ -37,6 +37,16 @@
 - **Memória em RAM (`RunnableWithMessageHistory`)**: suficiente para demonstrar o
   histórico por `session_id` no teste. Em produção, usaria Redis para persistir entre
   reinícios e múltiplas instâncias.
+- **`RunnableWithMessageHistory` está deprecated desde o LangChain 0.3** (o time do
+  LangChain recomenda migrar para LangGraph com um `checkpointer` para gerenciar
+  memória). Decisão consciente de manter mesmo assim: a classe continua funcional
+  (não tem previsão de remoção antes da v2.0), e o caso de uso aqui é um chatbot
+  simples de pergunta-resposta com histórico por sessão — não um agente com múltiplas
+  ferramentas ou grafo de estados. Adotar LangGraph só para isso trocaria uma
+  dependência simples e já testada por uma nova peça de infraestrutura
+  desproporcional ao problema. Se o chatbot evoluir para um agente (ferramentas,
+  múltiplos passos, roteamento condicional), migrar para LangGraph com
+  `MemorySaver`/`PostgresSaver` como checkpointer é o caminho natural.
 - **Testes com `FakeListChatModel`**: os testes não fazem chamadas reais à OpenAI (sem
   custo, sem flakiness, sem exigir chave válida no CI).
 
@@ -58,6 +68,8 @@
 - Rate limiting nos endpoints públicos.
 - Trocar SQLite por Postgres na `books_api` (multi-processo, concorrência real).
 - Trocar memória em RAM por Redis no chatbot (múltiplas instâncias, persistência).
+- Migrar a memória de conversa do chatbot de `RunnableWithMessageHistory` (deprecated)
+  para LangGraph + checkpointer, especialmente se o chatbot ganhar ferramentas/agente.
 - Observabilidade: métricas (Prometheus) e tracing distribuído além do LangSmith.
 - Deploy: imagens publicadas em registry + orquestração (Kubernetes/ECS) em vez de
   apenas Docker Compose local.
